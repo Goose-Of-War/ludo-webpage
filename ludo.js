@@ -19,10 +19,10 @@ let MAP = {};
 		} else if (clr=="G") {
 			MAP[clr + i].row = i<5 ? 2+i : (i<11 ? 7 : i-3);
 			MAP[clr + i].col = i<5 ? 9 : (i<11 ? i+5 : 15);
-		} else if (clr=="Y") {
+		} else if (clr=="B") {
 			MAP[clr + i].row = i<5 ? 9 : (i<11 ? i+5 : 15);
 			MAP[clr + i].col = i<5 ? 14-i : (i<11 ? 9 : 19-i);
-		} else if (clr=="B") {
+		} else if (clr=="Y") {
 			MAP[clr + i].row = i<5 ? 14-i : (i<11 ? 9 : 19-i);
 			MAP[clr + i].col = i<5 ? 7 : (i<11 ? 11-i : 1);
 		}
@@ -31,22 +31,22 @@ let MAP = {};
 function token_update() {
 	// run loop till dice val runs out to zero
 	while (dice_val--) {
-		console.log(TOKEN.locn);
-		// remove from current tile
+		// remove from the current tile
 		MAP[TOKEN.locn].occupants.pop();
 		MAP[TOKEN.locn].elm.removeChild(TOKEN.elm);
 		// see what the next tile is
-		if (~~(TOKEN.locn[1])+1 == 13) {
-			console.log("Entered?");
+		if (TOKEN.locn === "Y11") {
+			
+		} else if (~~(TOKEN.locn.slice(1,))+1 == 13) {
 			TOKEN.locn = ["R", "G", "B", "Y"][(["R", "G", "B", "Y"].findIndex(elm => elm === TOKEN.locn[0])+1)%4]+"0";
-		} else {TOKEN.locn = TOKEN.locn.slice(1,) + (~~(TOKEN.locn[1])+1);}
+		} else { TOKEN.locn = TOKEN.locn.slice(0,1) + (~~(TOKEN.locn.slice(1,))+1); }
 		// send to the next tile
 		MAP[TOKEN.locn].occupants.push(TOKEN.elm);
 		MAP[TOKEN.locn].elm.appendChild(TOKEN.elm);
-		console.log(TOKEN.locn)
 	}
 	// so that dice_val becomes 0
 	dice_val++;
+	document.getElementById("dice-val").innerHTML = dice_val;
 }
 // on init button click; until then, it's a ded page ;-;
 document.getElementById("init-button").onclick = () => {
@@ -82,8 +82,15 @@ document.getElementById("init-button").onclick = () => {
 	container.id = "dice-container";
 	let dice_btn = document.createElement("button");
 	dice_btn.id = "dice-button";
-	dice_btn.onclick = () => { dice_val = dice_val ? dice_val : Math.floor(Math.random()*6+1); };
+	dice_btn.onclick = () => {
+		dice_val = dice_val ? dice_val : Math.floor(Math.random()*6+1);
+		document.getElementById("dice-val").innerHTML = dice_val;
+	};
 	dice_btn.innerHTML = "Roll dice";
+	let value_span = document.createElement("span");
+	value_span.id = "dice-val";
+	value_span.innerHTML = dice_val;
 	container.appendChild(dice_btn);
+	container.appendChild(value_span);
 	document.body.appendChild(container);
 }
